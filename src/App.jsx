@@ -116,12 +116,13 @@ const productData = [
 ];
 
 function App() {
+  {/* State for the buttons in the Navigation bar */}
   const [products] = useState(productData);
   const [selectedCategory, setSelectedCategory] = useState("Potatoes"); // default
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedVendor, setSelectedVendor] = useState(null);
 
-
+ {/* Filters product categories based on the State */}
   const filteredProducts = products.filter((product) => {
     return (
       (!selectedCategory || product.category === selectedCategory) &&
@@ -129,12 +130,13 @@ function App() {
       (!selectedVendor || product.vendor === selectedVendor)
     );
   });
-
+ {/* Clears all filters */}
   const clearAllFilters = () => {
     setSelectedCategory(null);
     setSelectedLocation(null);
     setSelectedVendor(null);
   };
+   {/* Star Ratings tag */}
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
@@ -186,6 +188,7 @@ function App() {
                   <span className="detail-label">Unit:</span>
                   <span className="detail-value">{product.unit_measurement}</span>
                 </div>
+                {/* Stars Grid */}
                 <div className="product-rating">{renderStars(product.rating)}</div>
               </div>
             </div>
