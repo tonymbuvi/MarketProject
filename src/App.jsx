@@ -1,128 +1,24 @@
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaStar } from 'react-icons/fa'; 
 import Navbar from './Navbar';
 
-
-const productData = [
-  {
-    "id": 1,
-    "date": "2025-08-23",
-    "category": "Potatoes",
-    "unit_measurement": "KG",
-    "price": "100/KG",
-    "freshness": "Today",
-    "vendor": "Vendor A",
-    "location": "Githurai",
-    "rating": 4,
-    "image_url": "src/assets/Potatoes.jfif"
-  },
-  {
-    "id": 2,
-    "date": "2025-08-23",
-    "category": "Potatoes",
-    "unit_measurement": "KG",
-    "price": "120/KG",
-    "freshness": "Today",
-    "vendor": "Vendor B",
-    "location": "Marikiti",
-    "rating": 5,
-    "image_url": "src/assets/Potatoes.jfif"
-  },
-  {
-    "id": 3,
-    "date": "2025-08-23",
-    "category": "Potatoes",
-    "unit_measurement": "KG",
-    "price": "130/KG",
-    "freshness": "Today",
-    "vendor": "Vendor C",
-    "location": "Ruaka",
-    "rating": 3,
-    "image_url": "src/assets/Potatoes.jfif"
-  },
-  {
-    "id": 4,
-    "date": "2025-08-23",
-    "category": "Tomatoes",
-    "unit_measurement": "KG",
-    "price": "80/KG",
-    "freshness": "Today",
-    "vendor": "Vendor A",
-    "location": "Githurai",
-    "rating": 4,
-    "image_url": "src/assets/Tomatoes.jfif"
-  },
-  {
-    "id": 5,
-    "date": "2025-08-23",
-    "category": "Tomatoes",
-    "unit_measurement": "KG",
-    "price": "60/KG",
-    "freshness": "Today",
-    "vendor": "Vendor B",
-    "location": "Marikiti",
-    "rating": 5,
-    "image_url": "src/assets/Tomatoes.jfif"
-  },
-  {
-    "id": 6,
-    "date": "2025-08-23",
-    "category": "Tomatoes",
-    "unit_measurement": "KG",
-    "price": "70/KG",
-    "freshness": "Today",
-    "vendor": "Vendor C",
-    "location": "Ruaka",
-    "rating": 3,
-    "image_url": "src/assets/Tomatoes.jfif"
-  },
-  {
-    "id": 7,
-    "date": "2025-08-23",
-    "category": "Beans",
-    "unit_measurement": "KG",
-    "price": "40/KG",
-    "freshness": "Today",
-    "vendor": "Vendor A",
-    "location": "Githurai",
-    "rating": 4,
-    "image_url": "src/assets/Beans.jfif"
-  },
-  {
-    "id": 8,
-    "date": "2025-08-23",
-    "category": "Beans",
-    "unit_measurement": "KG",
-    "price": "30/KG",
-    "freshness": "Today",
-    "vendor": "Vendor B",
-    "location": "Marikiti",
-    "rating": 5,
-    "image_url": "src/assets/Beans.jfif"
-  },
-  {
-    "id": 9,
-    "date": "2025-08-23",
-    "category": "Beans",
-    "unit_measurement": "KG",
-    "price": "35/KG",
-    "freshness": "Today",
-    "vendor": "Vendor C",
-    "location": "Ruaka",
-    "rating": 3,
-    "image_url": "src/assets/Beans.jfif"
-  }
-];
-
 function App() {
-  {/* State for the buttons in the Navigation bar */}
-  const [products] = useState(productData);
+  // State for the buttons in the Navigation bar
+  const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("Potatoes"); // default
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedVendor, setSelectedVendor] = useState(null);
 
- {/* Filters product categories based on the State */}
+  // Fetch products when component loads
+  useEffect(() => {
+    fetch("http://localhost:4000/products")  // Flask endpoint
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Error fetching products:", err));
+  }, []);
+
+  // Filters product categories based on the State
   const filteredProducts = products.filter((product) => {
     return (
       (!selectedCategory || product.category === selectedCategory) &&
@@ -130,21 +26,47 @@ function App() {
       (!selectedVendor || product.vendor === selectedVendor)
     );
   });
- {/* Clears all filters */}
+
+  // Clears all filters
   const clearAllFilters = () => {
     setSelectedCategory(null);
     setSelectedLocation(null);
     setSelectedVendor(null);
   };
-   {/* Star Ratings tag */}
-  const renderStars = (rating) => {
+
+  // Update rating in backend + frontend
+  const updateRating = (id, newRating) => {
+    fetch("http://localhost:4000/update-rating", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, newRating }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          // Update UI locally so it reflects immediately
+          setProducts((prev) =>
+            prev.map((p) =>
+              p.id === id ? { ...p, rating: newRating } : p
+            )
+          );
+        }
+      })
+      .catch((err) => console.error("Error updating rating:", err));
+  };
+
+  // Star Ratings tag
+  const renderStars = (rating, id) => {
+    const numericRating = Number(rating) || 0;
     const stars = [];
     for (let i = 0; i < 5; i++) {
       stars.push(
         <FaStar
           key={i}
-          color={i < rating ? '#ffc107' : '#e4e5e9'}
+          color={i < numericRating ? "#ffc107" : "#e4e5e9"}
           size={16}
+          onClick={() => updateRating(id, i + 1)} // update on click
+          style={{ cursor: "pointer" }}
         />
       );
     }
@@ -189,7 +111,9 @@ function App() {
                   <span className="detail-value">{product.unit_measurement}</span>
                 </div>
                 {/* Stars Grid */}
-                <div className="product-rating">{renderStars(product.rating)}</div>
+                <div className="product-rating">
+                  {renderStars(product.rating, product.id)}
+                </div>
               </div>
             </div>
           ))}
