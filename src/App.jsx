@@ -2,6 +2,12 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import { FaStar } from 'react-icons/fa'; 
 import Navbar from './Navbar';
+import CategoryCard1 from './category_card/categorycard1';
+import CategoryCard2 from './category_card/categorycard2';
+import ProductCard from './product_card/productcard';
+import ProductCard1 from './product_card/productcard1';
+import fruits from './assets/fruits.png';
+import fruits2 from './assets/fruits2.png';
 
 function App() {
   // State for the buttons in the Navigation bar
@@ -81,42 +87,30 @@ function App() {
         onLocationSelect={setSelectedLocation}
         onVendorSelect={setSelectedVendor}
         onClearAll={clearAllFilters}
-      />
-
-      {/* Product Grid */}
-      <div className="main-container">
-        <div className="product-grid">
-          {filteredProducts.map((product) => (
-            <div key={product.id} className="product-card">
-              <div className="product-details">
-                <h3 className="product-name">{product.category}</h3>
-                <div className="detail-item">
-                  <span className="detail-label">Price:</span>
-                  <span className="detail-value">{product.price}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Location:</span>
-                  <span className="detail-value">{product.location}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Vendor:</span>
-                  <span className="detail-value">{product.vendor}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Date:</span>
-                  <span className="detail-value">{product.date}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Unit:</span>
-                  <span className="detail-value">{product.unit_measurement}</span>
-                </div>
-                {/* Stars Grid */}
-                <div className="product-rating">
-                  {renderStars(product.rating, product.id)}
-                </div>
-              </div>
-            </div>
-          ))}
+      />      
+      <div style={{margin: "40px"}}>
+         {/* Category Cards */}
+        <div className="category-cards-section">
+          <CategoryCard1/>
+          <CategoryCard2/>
+        </div>
+        {/* Example Product Card */}
+        <div style={{ display: "flex", gap: "30px", margin: "40px" }}>
+          <ProductCard 
+            image={fruits}
+            title="SHIELD SPRAY"
+            price={37}
+          />
+          <ProductCard 
+            image={fruits2}
+            title="SHIELD SHAMPOO"
+            price={39}
+            oldPrice={60}
+            onSale={true}
+          />
+        </div>
+        <div>
+          <ProductCard1/>
         </div>
       </div>
     </div>
