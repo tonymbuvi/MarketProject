@@ -10,73 +10,14 @@ import fruits from './assets/fruits.png';
 import fruits2 from './assets/fruits2.png';
 
 function App() {
-  // State for the buttons in the Navigation bar
-  const [products, setProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("Potatoes"); // default
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedVendor, setSelectedVendor] = useState(null);
 
-  // Fetch products when component loads
-  useEffect(() => {
-    fetch("http://localhost:4000/products")  // Flask endpoint
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.error("Error fetching products:", err));
-  }, []);
-
-  // Filters product categories based on the State
-  const filteredProducts = products.filter((product) => {
-    return (
-      (!selectedCategory || product.category === selectedCategory) &&
-      (!selectedLocation || product.location === selectedLocation) &&
-      (!selectedVendor || product.vendor === selectedVendor)
-    );
-  });
-
-  // Clears all filters
   const clearAllFilters = () => {
     setSelectedCategory(null);
     setSelectedLocation(null);
     setSelectedVendor(null);
-  };
-
-  // Update rating in backend + frontend
-  const updateRating = (id, newRating) => {
-    fetch("http://localhost:4000/update-rating", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, newRating }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          // Update UI locally so it reflects immediately
-          setProducts((prev) =>
-            prev.map((p) =>
-              p.id === id ? { ...p, rating: newRating } : p
-            )
-          );
-        }
-      })
-      .catch((err) => console.error("Error updating rating:", err));
-  };
-
-  // Star Ratings tag
-  const renderStars = (rating, id) => {
-    const numericRating = Number(rating) || 0;
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <FaStar
-          key={i}
-          color={i < numericRating ? "#ffc107" : "#e4e5e9"}
-          size={16}
-          onClick={() => updateRating(id, i + 1)} // update on click
-          style={{ cursor: "pointer" }}
-        />
-      );
-    }
-    return stars;
   };
 
   return (
@@ -87,32 +28,41 @@ function App() {
         onLocationSelect={setSelectedLocation}
         onVendorSelect={setSelectedVendor}
         onClearAll={clearAllFilters}
-      />      
-      <div style={{margin: "40px"}}>
-         {/* Category Cards */}
-        <div className="category-cards-section">
-          <CategoryCard1/>
-          <CategoryCard2/>
-        </div>
-        {/* Example Product Card */}
-        <div style={{ display: "flex", gap: "30px", margin: "40px" }}>
+        selectedCategory={selectedCategory}
+        selectedLocation={selectedLocation}
+        selectedVendor={selectedVendor}
+      />
+
+      {/* Category Cards */}
+      <div className="category-cards-section">
+        <CategoryCard2/>
+        <CategoryCard1/>
+      </div>
+
+      {/* Example Product Card */}
+        <div style={{ display: "flex", gap: "30px", justifyContent: "center" , marginTop: "40px", marginBottom: "40px"}}>
           <ProductCard 
             image={fruits}
-            title="SHIELD SPRAY"
+            title="Vegetable Basket"
             price={37}
           />
           <ProductCard 
             image={fruits2}
-            title="SHIELD SHAMPOO"
+            title="Fruit Basket"
             price={39}
             oldPrice={60}
             onSale={true}
           />
         </div>
-        <div>
-          <ProductCard1/>
-        </div>
-      </div>
+
+      <ProductCard1
+        selectedCategory={selectedCategory}
+        selectedLocation={selectedLocation}
+        selectedVendor={selectedVendor}
+      />   
+
+      
+      
     </div>
   );
 }

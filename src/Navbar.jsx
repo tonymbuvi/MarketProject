@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import "./Navbar.css";
 
-
-function Navbar({ onCategorySelect, onLocationSelect, onVendorSelect, onClearAll }) {
+function Navbar({
+  onCategorySelect,
+  onLocationSelect,
+  onVendorSelect,
+  onClearAll,
+  selectedCategory,
+  selectedLocation,
+  selectedVendor,
+}) {
   const [openMenu, setOpenMenu] = useState(null);
 
   const categories = {
@@ -34,9 +41,10 @@ function Navbar({ onCategorySelect, onLocationSelect, onVendorSelect, onClearAll
               <div className="dropdown-content">
                 <a
                   href="#"
+                  className={!selectedCategory ? "selected" : ""}
                   onClick={(e) => {
                     e.preventDefault();
-                    onCategorySelect(null); // ALL
+                    onCategorySelect(null);
                     setOpenMenu(null);
                   }}
                 >
@@ -49,6 +57,7 @@ function Navbar({ onCategorySelect, onLocationSelect, onVendorSelect, onClearAll
                       <a
                         href="#"
                         key={item}
+                        className={selectedCategory === item ? "selected" : ""}
                         onClick={(e) => {
                           e.preventDefault();
                           onCategorySelect(item);
@@ -73,9 +82,10 @@ function Navbar({ onCategorySelect, onLocationSelect, onVendorSelect, onClearAll
               <div className="dropdown-content">
                 <a
                   href="#"
+                  className={!selectedLocation ? "selected" : ""}
                   onClick={(e) => {
                     e.preventDefault();
-                    onLocationSelect(null); // ALL
+                    onLocationSelect(null);
                     setOpenMenu(null);
                   }}
                 >
@@ -85,6 +95,7 @@ function Navbar({ onCategorySelect, onLocationSelect, onVendorSelect, onClearAll
                   <a
                     href="#"
                     key={loc}
+                    className={selectedLocation === loc ? "selected" : ""}
                     onClick={(e) => {
                       e.preventDefault();
                       onLocationSelect(loc);
@@ -107,9 +118,10 @@ function Navbar({ onCategorySelect, onLocationSelect, onVendorSelect, onClearAll
               <div className="dropdown-content">
                 <a
                   href="#"
+                  className={!selectedVendor ? "selected" : ""}
                   onClick={(e) => {
                     e.preventDefault();
-                    onVendorSelect(null); // ALL
+                    onVendorSelect(null);
                     setOpenMenu(null);
                   }}
                 >
@@ -119,6 +131,7 @@ function Navbar({ onCategorySelect, onLocationSelect, onVendorSelect, onClearAll
                   <a
                     href="#"
                     key={vendor}
+                    className={selectedVendor === vendor ? "selected" : ""}
                     onClick={(e) => {
                       e.preventDefault();
                       onVendorSelect(vendor);

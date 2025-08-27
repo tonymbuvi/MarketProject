@@ -2,22 +2,16 @@ import { useState, useEffect } from 'react';
 import { FaStar } from 'react-icons/fa'; 
 import "./productcard1.css";
 
-function ProductCard1() {
-  // State for the buttons in the Navigation bar
+function ProductCard1({ selectedCategory, selectedLocation, selectedVendor }) {
   const [products, setProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null); // default
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [selectedVendor, setSelectedVendor] = useState(null);
 
-  // Fetch products when component loads
   useEffect(() => {
-    fetch("http://localhost:4000/products")  // Flask endpoint
+    fetch("http://localhost:4000/products")
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .catch((err) => console.error("Error fetching products:", err));
   }, []);
 
-  // Filters product categories based on the State
   const filteredProducts = products.filter((product) => {
     return (
       (!selectedCategory || product.category === selectedCategory) &&
@@ -25,13 +19,6 @@ function ProductCard1() {
       (!selectedVendor || product.vendor === selectedVendor)
     );
   });
-
-  // Clears all filters
-  const clearAllFilters = () => {
-    setSelectedCategory(null);
-    setSelectedLocation(null);
-    setSelectedVendor(null);
-  };
 
   // Update rating in backend + frontend
   const updateRating = (id, newRating) => {
